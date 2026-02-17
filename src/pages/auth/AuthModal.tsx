@@ -1,70 +1,119 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import InputField from "../../component/ui/inputs/InputField";
-import { Heading } from "../../component/ui/headings/Heading";
-import { AuthButton } from "../../component/ui/button/AuthButton";
-import PageHeader from "../../component/ui/headings/PageHeader";
+import LoginPage from "./LoginPage";
+import ForgotPasswordPage from "./ForgotPasswordPage";
+import OTPVerificationPage from "./OTPVerificationPage";
+import ResetPasswordPage from "./ResetPasswordPage";
+
+type AuthPage = "login" | "forgotPassword" | "otpVerification" | "resetPassword";
 
 const AuthModal = () => {
-  const { control, handleSubmit } = useForm({
+  const [currentPage, setCurrentPage] = useState<AuthPage>("login");
+  const [userEmail, setUserEmail] = useState<string>("");
+
+  // Login form
+  const loginForm = useForm({
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log("Form Submitted:", data);
+  // Forgot password form
+  const forgotPasswordForm = useForm({
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  // OTP form
+  const otpForm = useForm({
+    defaultValues: {
+      otp: "",
+    },
+  });
+
+  // Reset password form
+  const resetPasswordForm = useForm({
+    defaultValues: {
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+
+  const onLoginSubmit = (data: any) => {
+    console.log("Login Submitted:", data);
+  };
+
+  const onForgotPasswordSubmit = (data: any) => {
+    console.log("Forgot Password Submitted:", data);
+    setUserEmail(data.email);
+    setCurrentPage("otpVerification");
+  };
+
+  const onOTPSubmit = (data: any) => {
+    console.log("OTP Submitted:", data);
+    setCurrentPage("resetPassword");
+  };
+
+  const onResetPasswordSubmit = (data: any) => {
+    console.log("Reset Password Submitted:", data);
+    // After successful reset, go back to login
+    setCurrentPage("login");
+  };
+
+  const handleBack = () => {
+    if (currentPage === "otpVerification") {
+      setCurrentPage("forgotPassword");
+    } else if (currentPage === "resetPassword") {
+      setCurrentPage("otpVerification");
+    } else if (currentPage === "forgotPassword") {
+      setCurrentPage("login");
+    }
+  };
+
+  const handleResetOTP = () => {
+    console.log("Reset OTP requested");
+    // Add your reset OTP logic here
   };
 
   return (
     /* Centering Container */
     <div className="flex min-h-screen w-full items-center justify-center bg-gray-50 p-4">
       {/* Modal Card */}
-      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
-        <PageHeader title="Login" className="mb-6" />
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-2">
-            <InputField
-              label="email"
-              name="email"
-              type="email"
-              control={control}
-              placeholder="e.g. abc_john@email.com"
-              required
-              className="!pt-0"
-            />
-            <InputField
-              label="password enter"
-              name="password"
-              type="password"
-              control={control}
-              placeholder="Enter password"
-              required
-              className="!pt-0"
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <div className="relative">
-              <div className="flex justify-end mt-2">
-                <button
-                  type="button"
-                  className="text-[#FF7A00] text-[14px] font-bold hover:underline"
-                >
-                  Forgot password?
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <AuthButton type="submit" label="Login" />
-          </div>
-        </form>
+      <div className="w-full max-w-[550px] p-8 bg-white rounded-lg shadow-md">
+        {currentPage === "login" && (
+          <LoginPage
+            form={loginForm}
+            onSubmit={onLoginSubmit}
+            onForgotPasswordClick={() => setCurrentPage("forgotPassword")}
+          />
+        )}
+        {currentPage === "forgotPassword" && (
+          <ForgotPasswordPage
+            form={forgotPasswordForm}
+            onSubmit={onForgotPasswordSubmit}
+            onBack={handleBack}
+          />
+        )}
+        {currentPage === "otpVerification" && (
+          <OTPVerificationPage
+            form={otpForm}
+            onSubmit={onOTPSubmit}
+            onBack={handleBack}
+            onResetOTP={handleResetOTP}
+            userEmail={userEmail}
+          />
+        )}
+        {currentPage === "resetPassword" && (
+          <ResetPasswordPage
+            form={resetPasswordForm}
+            onSubmit={onResetPasswordSubmit}
+            onBack={handleBack}
+          />
+        )}
       </div>
     </div>
   );

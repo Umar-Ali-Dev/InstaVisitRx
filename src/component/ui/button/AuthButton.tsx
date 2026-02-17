@@ -11,8 +11,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const AuthButton = ({
   label,
-  bgColor = "bg-[#71599B]",
-  height = "h-[56px]",
+  bgColor = "bg-[#705295]",
+  height = "h-[45px]",
   rounded = "rounded-xl",
   width = "w-full",
   className = "",
