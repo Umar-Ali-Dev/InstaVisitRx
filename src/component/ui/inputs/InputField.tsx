@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import {
   Controller,
@@ -14,19 +12,18 @@ export interface InputFieldProps<T extends FieldValues> {
   label: string;
   name: Path<T>;
   control: Control<T>;
-  type: "text" | "password" | "email" | "number" | "tel" | "date" | "";
+  type: "text" | "password" | "email" | "number" | "tel" | "";
   placeholder?: string;
   required?: boolean;
   className?: string;
   height?: string;
   hideStar?: boolean;
-  readOnly?: boolean;
+  disabled?: boolean;
   rules?: Record<string, any>;
   onChange?: (value: any) => void;
-  disabled?: boolean;
 }
 
-const InputField = <T extends FieldValues>({
+function InputField<T extends FieldValues>({
   label,
   name,
   control,
@@ -36,17 +33,25 @@ const InputField = <T extends FieldValues>({
   height,
   placeholder,
   hideStar = false,
-  readOnly = false,
   rules = {},
   onChange: customOnChange,
   disabled = false,
-}: InputFieldProps<T>) => {
+}: InputFieldProps<T>) {
   const [showPassword, setShowPassword] = useState(false);
-  const inputHeight = height || "h-[56px]"; // Standard Figma height
+  const inputHeight = height || "h-[48px]"; // Adjusted for the standard look in the image
   const isPasswordType = type === "password";
 
   return (
-    <div className={`relative w-full ${className || ""}`}>
+    <div className={`flex flex-col gap-2 w-full ${className || ""}`}>
+      {/* Label placed outside the input container */}
+      <label
+        htmlFor={String(name)}
+        className="text-[14px] font-medium text-[#000000]"
+      >
+        {label}
+        {required && !hideStar && <span className="ml-1 text-red-500">*</span>}
+      </label>
+
       <Controller
         name={name}
         control={control}
@@ -63,7 +68,14 @@ const InputField = <T extends FieldValues>({
           ...rules,
         }}
         render={({ field, fieldState: { error } }) => {
-          const hasError = !!error;
+          const handleInternalChange = (
+            e: React.ChangeEvent<HTMLInputElement>,
+          ) => {
+            const val =
+              type === "number" ? e.target.valueAsNumber : e.target.value;
+            field.onChange(val);
+            if (customOnChange) customOnChange(val);
+          };
 
           return (
             <div className="relative w-full">
@@ -73,52 +85,27 @@ const InputField = <T extends FieldValues>({
                 type={
                   isPasswordType ? (showPassword ? "text" : "password") : type
                 }
-                placeholder=" " // Keep empty for peer-placeholder-shown to work
-                readOnly={readOnly}
+                placeholder={placeholder}
                 disabled={disabled}
                 className={`
-                  peer w-full rounded-lg px-4 pt-5 pb-2 text-[14px] font-normal outline-none transition-all
+                  w-full rounded-lg px-4 text-[14px] outline-none transition-all
                   ${inputHeight}
-                  bg-white
-                  border
-                  ${hasError ? "border-red-500" : "border-[#E7E8E9]"}
-                  focus:border-primary-500 /* Change 'primary-500' to your brand color */
-                  
-                  ${disabled ? "bg-gray-50 cursor-not-allowed text-gray-400" : "text-black"}
-                  ${isPasswordType ? "pr-12" : ""}
+                  /* Custom Border and Colors */
+                  border border-[#D4CFCC] bg-white text-[#999999]
+                  placeholder:text-[#999999]/60
+                  focus:border-[#FF7A00] /* Optional focus state */
+                  ${error ? "border-red-500" : ""}
+                  ${disabled ? "bg-gray-100 cursor-not-allowed" : "cursor-text"}
                 `}
                 value={field.value ?? ""}
-                onChange={(e) => {
-                  field.onChange(e);
-                  if (customOnChange) customOnChange(e.target.value);
-                }}
+                onChange={handleInternalChange}
               />
 
-              {/* Floating Label */}
-              <label
-                htmlFor={String(name)}
-                className={`
-                  absolute left-4 top-1/2 -translate-y-1/2 z-10 origin-left transform 
-                  text-[14px] font-normal duration-200 pointer-events-none
-                  text-[#B3B7BB]
-                  
-                  /* When focused or input has content, move to top */
-                  peer-focus:-translate-y-[130%] peer-focus:scale-[0.85] peer-focus:text-gray-500
-                  peer-[:not(:placeholder-shown)]:-translate-y-[130%] peer-[:not(:placeholder-shown)]:scale-[0.85]
-                `}
-              >
-                {label}
-                {required && !hideStar && (
-                  <span className="ml-1 text-red-500">*</span>
-                )}
-              </label>
-
-              {/* Password Toggle */}
-              {isPasswordType && !readOnly && (
+              {isPasswordType && (
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#B3B7BB] hover:text-gray-600 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#999999]"
                 >
                   {showPassword ? (
                     <FaEye size={18} />
@@ -128,13 +115,9 @@ const InputField = <T extends FieldValues>({
                 </button>
               )}
 
-              {/* Error Message */}
               {error && (
                 <div className="mt-1">
-                  <ErrorsMessage
-                    title={error.message}
-                    className="text-[12px] text-red-500"
-                  />
+                  <ErrorsMessage title={error.message} className="text-left" />
                 </div>
               )}
             </div>
@@ -143,6 +126,6 @@ const InputField = <T extends FieldValues>({
       />
     </div>
   );
-};
+}
 
 export default InputField;

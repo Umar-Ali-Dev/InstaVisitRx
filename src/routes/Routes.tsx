@@ -5,7 +5,7 @@ import AuthModal from "../pages/auth/AuthModal";
 export const router = createBrowserRouter([
   {
     // element: <PublicRoute />,
-    children: [{ path: "/login", element: <AuthModal /> }],
+    children: [{ path: "/", element: <AuthModal /> }],
   },
   {
     path: "*",
