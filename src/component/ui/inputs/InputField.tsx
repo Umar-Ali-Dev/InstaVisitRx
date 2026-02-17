@@ -93,7 +93,6 @@ function InputField<T extends FieldValues>({
                   /* Custom Border and Colors */
                   border border-[#D4CFCC] bg-white text-[#999999]
                   placeholder:text-[#999999]/60
-                  focus:border-[#FF7A00] /* Optional focus state */
                   ${error ? "border-red-500" : ""}
                   ${disabled ? "bg-gray-100 cursor-not-allowed" : "cursor-text"}
                 `}

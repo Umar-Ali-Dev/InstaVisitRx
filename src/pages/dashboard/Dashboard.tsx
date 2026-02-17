@@ -1,13 +1,30 @@
 "use client";
 
 import React from "react";
+import { useForm } from "react-hook-form";
 import Layout from "../../component/layout/Layout";
+import DataTable from "../../component/datatable/DataTable";
+import Heading from "../../component/ui/headings/Heading";
+import InputField from "../../component/ui/inputs/InputField";
+import searchIcon from "../../assets/icons/search.svg";
 
 const Dashboard = () => {
+  const searchForm = useForm({
+    defaultValues: {
+      search: "",
+    },
+  });
+
+  // Watch the search field and sync with DataTable
+  const searchText = searchForm.watch("search") || "";
+
   return (
     <Layout>
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-[#0A1E25]">Welcome, Mr. Jhon</h2>
+        <Heading 
+          title="Welcome, Mr. Jhon" 
+          textSize = "text-[22px]"
+        />
         
         {/* Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -69,72 +86,36 @@ const Dashboard = () => {
         </div>
 
         {/* Queue Requests Section */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-[#FFFAF7] rounded-lg shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-[#0A1E25]">Queue Requests</h3>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Patient name"
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#705295]"
-              />
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                🔍
-              </span>
+            <Heading 
+              title="Queue Requests" 
+              textSize = "text-[20px]"
+            />
+            <div className="relative w-auto min-w-[250px]">
+              <div className="relative">
+                <InputField
+                  label=""
+                  name="search"
+                  type="text"
+                  control={searchForm.control}
+                  placeholder="Patient name"
+                  className="!pt-0 [&_input]:pl-10"
+                  hideStar
+                />
+                <div className="absolute left-4 top-[24px] pointer-events-none">
+                  <img 
+                    src={searchIcon} 
+                    alt="Search" 
+                    className="w-full h-full object-cover object-center"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-[#705295] text-white">
-                  <th className="px-4 py-3 text-left font-semibold">Full Name</th>
-                  <th className="px-4 py-3 text-left font-semibold">Email</th>
-                  <th className="px-4 py-3 text-left font-semibold">Phone</th>
-                  <th className="px-4 py-3 text-left font-semibold">Provider</th>
-                  <th className="px-4 py-3 text-left font-semibold">Status</th>
-                  <th className="px-4 py-3 text-left font-semibold">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-gray-200">
-                  <td className="px-4 py-3 text-gray-700">Jospan Franklin</td>
-                  <td className="px-4 py-3 text-gray-700">Jospan@gmail.com</td>
-                  <td className="px-4 py-3 text-gray-700">(987) 876 8768</td>
-                  <td className="px-4 py-3 text-gray-700">---</td>
-                  <td className="px-4 py-3">
-                    <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm">
-                      Waiting provider
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex gap-2">
-                      <button className="p-1 hover:bg-gray-100 rounded">👥</button>
-                      <button className="p-1 hover:bg-gray-100 rounded">📄</button>
-                    </div>
-                  </td>
-                </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="px-4 py-3 text-gray-700">Jospan Franklin</td>
-                  <td className="px-4 py-3 text-gray-700">Jospan@gmail.com</td>
-                  <td className="px-4 py-3 text-gray-700">(987) 876 8768</td>
-                  <td className="px-4 py-3 text-gray-700">Dr. Alina Star</td>
-                  <td className="px-4 py-3">
-                    <span className="px-3 py-1 bg-yellow-100 text-yellow-600 rounded-full text-sm">
-                      Waiting Response
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex gap-2">
-                      <button className="p-1 hover:bg-gray-100 rounded">👥</button>
-                      <button className="p-1 hover:bg-gray-100 rounded">📄</button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          {/* DataTable */}
+          <DataTable searchText={searchText} />
         </div>
       </div>
     </Layout>
