@@ -6,6 +6,7 @@ import LoginPage from "./LoginPage";
 import ForgotPasswordPage from "./ForgotPasswordPage";
 import OTPVerificationPage from "./OTPVerificationPage";
 import ResetPasswordPage from "./ResetPasswordPage";
+import instaVisitLogo from "../../assets/icons/instaVisit.svg";
 
 type AuthPage = "login" | "forgotPassword" | "otpVerification" | "resetPassword";
 
@@ -80,10 +81,20 @@ const AuthModal = () => {
   };
 
   return (
-    /* Centering Container */
-    <div className="flex min-h-screen w-full items-center justify-center bg-gray-50 p-4">
-      {/* Modal Card */}
-      <div className="w-full max-w-[550px] p-8 bg-white rounded-lg shadow-md">
+    <div className="min-h-screen w-full bg-white relative">
+      <div className="absolute top-4 left-4 md:top-8 md:left-8">
+        <div className="flex flex-col gap-2">
+          <img 
+            src={instaVisitLogo} 
+            alt="InstaVisitRx+" 
+            className="h-auto w-auto"
+          />
+        </div>
+      </div>
+
+      <div className="flex min-h-screen w-full items-center justify-center bg-white p-4">
+        {/* Modal Card */}
+        <div className="w-full max-w-[550px] p-8 bg-white rounded-lg">
         {currentPage === "login" && (
           <LoginPage
             form={loginForm}
@@ -114,6 +125,7 @@ const AuthModal = () => {
             onBack={handleBack}
           />
         )}
+        </div>
       </div>
     </div>
   );
