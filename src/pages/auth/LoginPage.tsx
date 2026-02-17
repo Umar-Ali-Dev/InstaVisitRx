@@ -4,7 +4,7 @@ import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import InputField from "../../component/ui/inputs/InputField";
 import { AuthButton } from "../../component/ui/button/AuthButton";
-import PageHeader from "../../component/ui/headings/PageHeader";
+import Heading from "../../component/ui/headings/Heading";
 
 interface LoginPageProps {
   form: UseFormReturn<{
@@ -22,7 +22,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
 }) => {
   return (
     <>
-      <PageHeader title="Login" className="mb-6" />
+      <Heading title="Login" className="mb-6" />
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-2">
           <InputField

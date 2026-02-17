@@ -5,7 +5,7 @@ import { UseFormReturn } from "react-hook-form";
 import { FaArrowLeft, FaRedoAlt } from "react-icons/fa";
 import InputField from "../../component/ui/inputs/InputField";
 import { AuthButton } from "../../component/ui/button/AuthButton";
-import PageHeader from "../../component/ui/headings/PageHeader";
+import Heading from "../../component/ui/headings/Heading";
 
 interface OTPVerificationPageProps {
   form: UseFormReturn<{
@@ -34,7 +34,7 @@ const OTPVerificationPage: React.FC<OTPVerificationPageProps> = ({
         >
           <FaArrowLeft size={20} />
         </button>
-        <PageHeader title="OTP verification" className="mb-0" />
+        <Heading title="OTP verification" />
       </div>
       <div className="mb-4">
         <p className="text-[14px] text-[#0A1E25]">
@@ -61,7 +61,7 @@ const OTPVerificationPage: React.FC<OTPVerificationPageProps> = ({
             <button
               type="button"
               onClick={onResetOTP}
-              className="flex items-center gap-2 text-[#F76D00] text-[14px] font-bold hover:underline"
+              className="flex items-center gap-1 text-[#F76D00] text-[14px] font-bold hover:underline"
             >
               <FaRedoAlt size={16} className="text-[#F76D00]" />
               Reset OTP

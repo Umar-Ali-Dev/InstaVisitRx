@@ -5,7 +5,7 @@ import { UseFormReturn } from "react-hook-form";
 import { FaArrowLeft } from "react-icons/fa";
 import InputField from "../../component/ui/inputs/InputField";
 import { AuthButton } from "../../component/ui/button/AuthButton";
-import PageHeader from "../../component/ui/headings/PageHeader";
+import Heading from "../../component/ui/headings/Heading";
 
 interface ResetPasswordPageProps {
   form: UseFormReturn<{
@@ -31,7 +31,7 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
         >
           <FaArrowLeft size={20} />
         </button>
-        <PageHeader title="Reset password" className="mb-0" />
+        <Heading title="Reset password" />
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-2">
