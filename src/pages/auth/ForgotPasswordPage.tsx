@@ -1,50 +1,55 @@
 "use client";
 
 import React from "react";
-import { UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { FaArrowLeft } from "react-icons/fa";
+import toast from "react-hot-toast";
 import InputField from "../../component/ui/inputs/InputField";
 import { AuthButton } from "../../component/ui/button/AuthButton";
 import Heading from "../../component/ui/headings/Heading";
 
-interface ForgotPasswordPageProps {
-  form: UseFormReturn<{
-    email: string;
-  }>;
-  onSubmit: (data: { email: string }) => void;
-  onBack: () => void;
+interface ForgotProps {
+  onNavigate: (page: any) => void;
+  onForgotSuccess: (email: string) => void;
 }
 
-const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
-  form,
-  onSubmit,
-  onBack,
+const ForgotPasswordPage: React.FC<ForgotProps> = ({
+  onNavigate,
+  onForgotSuccess,
 }) => {
+  const { control, handleSubmit } = useForm({ defaultValues: { email: "" } });
+
+  const onSubmit = (data: any) => {
+    const loadToast = toast.loading("Requesting OTP...");
+    setTimeout(() => {
+      toast.success("OTP sent!", { id: loadToast });
+      onForgotSuccess(data.email);
+    }, 1200);
+  };
+
   return (
     <>
       <div className="flex items-center gap-3 mb-6">
         <button
           type="button"
-          onClick={onBack}
+          onClick={() => onNavigate("login")}
           className="text-[#0A1E25] hover:text-[#705295] transition-colors"
         >
           <FaArrowLeft size={20} />
         </button>
-        <Heading title="Forgot password?"/>
+        <Heading title="Forgot password?" />
       </div>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-2">
           <InputField
             label="Email address"
             name="email"
             type="email"
-            control={form.control}
-            placeholder="e.g. abc_john@email.com"
+            control={control}
             required
-            className="!pt-0"
+            placeholder="email@example.com"
           />
         </div>
-
         <div className="mt-4">
           <AuthButton type="submit" label="Next" />
         </div>

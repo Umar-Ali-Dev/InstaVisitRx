@@ -1,57 +1,68 @@
 "use client";
 
 import React from "react";
-import { UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { FaArrowLeft } from "react-icons/fa";
+import toast from "react-hot-toast";
 import InputField from "../../component/ui/inputs/InputField";
 import { AuthButton } from "../../component/ui/button/AuthButton";
 import Heading from "../../component/ui/headings/Heading";
 
 interface ResetPasswordPageProps {
-  form: UseFormReturn<{
-    newPassword: string;
-    confirmPassword: string;
-  }>;
-  onSubmit: (data: { newPassword: string; confirmPassword: string }) => void;
-  onBack: () => void;
+  onNavigate: (page: "otpVerification" | "login") => void;
 }
 
 const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
-  form,
-  onSubmit,
-  onBack,
+  onNavigate,
 }) => {
+  const { control, handleSubmit } = useForm({
+    defaultValues: { newPassword: "", confirmPassword: "" },
+  });
+
+  const onSubmit = (data: any) => {
+    if (data.newPassword !== data.confirmPassword) {
+      return toast.error("Passwords do not match!");
+    }
+
+    const loadToast = toast.loading("Updating password...");
+
+    // Simulate API update
+    setTimeout(() => {
+      toast.success("Password reset! Please login.", { id: loadToast });
+      onNavigate("login");
+    }, 1500);
+  };
+
   return (
     <>
       <div className="flex items-center gap-3 mb-6">
         <button
           type="button"
-          onClick={onBack}
+          onClick={() => onNavigate("otpVerification")}
           className="text-[#0A1E25] hover:text-[#705295] transition-colors"
         >
           <FaArrowLeft size={20} />
         </button>
         <Heading title="Reset password" />
       </div>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-2">
           <InputField
             label="New password"
             name="newPassword"
             type="password"
-            control={form.control}
+            control={control}
             placeholder="Choose a strong password"
             required
-            className="!pt-0"
           />
           <InputField
             label="Confirm password"
             name="confirmPassword"
             type="password"
-            control={form.control}
+            control={control}
             placeholder="Re-enter new password"
             required
-            className="!pt-0"
           />
         </div>
 

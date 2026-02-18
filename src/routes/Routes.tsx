@@ -5,7 +5,6 @@ import Dashboard from "../pages/dashboard/Dashboard";
 
 export const router = createBrowserRouter([
   {
-    // element: <PublicRoute />,
     children: [{ path: "/", element: <AuthModal /> }],
   },
   {

@@ -1,68 +1,78 @@
 "use client";
 
 import React from "react";
-import { UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import InputField from "../../component/ui/inputs/InputField";
 import { AuthButton } from "../../component/ui/button/AuthButton";
 import Heading from "../../component/ui/headings/Heading";
 
 interface LoginPageProps {
-  form: UseFormReturn<{
-    email: string;
-    password: string;
-  }>;
-  onSubmit: (data: { email: string; password: string }) => void;
-  onForgotPasswordClick: () => void;
+  onNavigate: (page: "forgotPassword" | "signUp") => void;
+  onLoginSuccess: (email: string) => void;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({
-  form,
-  onSubmit,
-  onForgotPasswordClick,
+  onNavigate,
+  onLoginSuccess,
 }) => {
+  const { control, handleSubmit } = useForm({
+    defaultValues: { email: "", password: "" },
+  });
+
+  const onSubmit = (data: any) => {
+    const loadToast = toast.loading("Checking credentials...");
+    setTimeout(() => {
+      toast.success("Credentials accepted!", { id: loadToast });
+      onLoginSuccess(data.email);
+    }, 1000);
+  };
+
   return (
     <>
       <Heading title="Login" className="mb-6" />
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-2">
           <InputField
-            label="email"
+            label="Email"
             name="email"
             type="email"
-            control={form.control}
-            placeholder="e.g. abc_john@email.com"
+            control={control}
             required
-            className="!pt-0"
+            placeholder="email@example.com"
           />
           <InputField
-            label="password enter"
+            label="Password"
             name="password"
             type="password"
-            control={form.control}
-            placeholder="Enter password"
+            control={control}
             required
-            className="!pt-0"
+            placeholder="Enter password"
           />
         </div>
-
-        <div className="flex flex-col gap-2">
-          <div className="relative">
-            <div className="flex justify-end mt-2">
-              <button
-                type="button"
-                onClick={onForgotPasswordClick}
-                className="text-[#F76D00] text-[14px] font-bold hover:underline"
-              >
-                Forgot password?
-              </button>
-            </div>
-          </div>
+        <div className="flex justify-end mt-2">
+          <button
+            type="button"
+            onClick={() => onNavigate("forgotPassword")}
+            className="text-[#F76D00] text-[14px] font-bold hover:underline"
+          >
+            Forgot password?
+          </button>
         </div>
-
         <div className="mt-4">
           <AuthButton type="submit" label="Login" />
         </div>
       </form>
+      <div className="mt-6 text-center text-[14px] text-[#999999]">
+        Don't have an account?{" "}
+        <button
+          type="button"
+          onClick={() => onNavigate("signUp")}
+          className="text-[#705295] font-bold hover:underline"
+        >
+          Sign Up
+        </button>
+      </div>
     </>
   );
 };
