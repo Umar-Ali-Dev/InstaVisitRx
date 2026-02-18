@@ -2,217 +2,16 @@
 
 import React, { useMemo, useState, useEffect } from "react";
 import DataTableComponent from "react-data-table-component";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import fileTextIcon from "../../assets/icons/fileText.svg";
 import userDoctorIcon from "../../assets/icons/userDoctor.svg";
 import userDoctorFillIcon from "../../assets/icons/userDoctorFill.svg";
-
-export interface QueueRequest {
-  id: number;
-  fullName: string;
-  email: string;
-  phone: string;
-  provider: string;
-  status: "Waiting provider" | "Waiting Response" | "Provider Respond" | "Completed" | "Resend Prescription" | "Prescription Sent" | "Prescription Failed";
-}
+import { queueRequestsData, QueueRequest } from "../../data/queueRequestsData";
 
 interface DataTableProps {
   data?: QueueRequest[];
   searchText?: string;
 }
-
-// Sample data
-const sampleData: QueueRequest[] = [
-  {
-    id: 1,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "---",
-    status: "Waiting provider",
-  },
-  {
-    id: 2,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "Dr. Alina Star",
-    status: "Provider Respond",
-  },
-  {
-    id: 3,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "Dr. Alina Star",
-    status: "Completed",
-  },
-  {
-    id: 4,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "---",
-    status: "Waiting provider",
-  },
-  {
-    id: 5,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "Dr. Alina Star",
-    status: "Resend Prescription",
-  },
-  {
-    id: 6,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "Dr. Alina Star",
-    status: "Prescription Sent",
-  },
-  {
-    id: 7,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "---",
-    status: "Waiting provider",
-  },
-  {
-    id: 8,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "Dr. Alina Star",
-    status: "Prescription Failed",
-  },
-  {
-    id: 9,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "Dr. Alina Star",
-    status: "Provider Respond",
-  },
-  {
-    id: 10,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "---",
-    status: "Waiting provider",
-  },
-  {
-    id: 11,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "Dr. Alina Star",
-    status: "Completed",
-  },
-  {
-    id: 12,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "Dr. Alina Star",
-    status: "Prescription Sent",
-  },
-  {
-    id: 13,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "---",
-    status: "Waiting provider",
-  },
-  {
-    id: 14,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "Dr. Alina Star",
-    status: "Resend Prescription",
-  },
-  {
-    id: 15,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "Dr. Alina Star",
-    status: "Provider Respond",
-  },
-  {
-    id: 16,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "---",
-    status: "Waiting provider",
-  },
-  {
-    id: 17,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "Dr. Alina Star",
-    status: "Prescription Failed",
-  },
-  {
-    id: 18,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "Dr. Alina Star",
-    status: "Completed",
-  },
-  {
-    id: 19,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "---",
-    status: "Waiting provider",
-  },
-  {
-    id: 20,
-    fullName: "Jospan Franklin",
-    email: "Jospan@gmail.com",
-    phone: "(987) 876 8768",
-    provider: "Dr. Alina Star",
-    status: "Prescription Sent",
-  },
-];
-
-// Generate more data for realistic pagination (995 total)
-const generateMoreData = (): QueueRequest[] => {
-  const statuses: QueueRequest["status"][] = [
-    "Waiting provider",
-    "Provider Respond",
-    "Completed",
-    "Resend Prescription",
-    "Prescription Sent",
-    "Prescription Failed",
-    "Waiting Response",
-  ];
-  const providers = ["---", "Dr. Alina Star", "Dr. John Smith", "Dr. Sarah Johnson"];
-  
-  const additionalData: QueueRequest[] = [];
-  for (let i = 21; i <= 995; i++) {
-    additionalData.push({
-      id: i,
-      fullName: `Patient ${i}`,
-      email: `patient${i}@gmail.com`,
-      phone: `(${Math.floor(Math.random() * 900) + 100}) ${Math.floor(Math.random() * 900) + 100} ${Math.floor(Math.random() * 9000) + 1000}`,
-      provider: providers[Math.floor(Math.random() * providers.length)],
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-    });
-  }
-  return [...sampleData, ...additionalData];
-};
-
-const defaultData = generateMoreData();
 
 // Custom Pagination Component
 const CustomPagination = ({ 
@@ -267,13 +66,13 @@ const CustomPagination = ({
         <button
           onClick={() => onChangePage(currentPage - 1)}
           disabled={currentPage === 1}
-          className={`p-2 rounded ${
+          className={`w-8 h-8 flex items-center justify-center rounded bg-white border border-gray-200 ${
             currentPage === 1
               ? "text-gray-300 cursor-not-allowed"
-              : "text-gray-600 hover:bg-gray-100"
+              : "text-gray-400 hover:bg-gray-50"
           }`}
         >
-          <FaChevronLeft size={16} />
+          <FaArrowLeft size={14} />
         </button>
 
         <div className="flex items-center gap-1">
@@ -281,10 +80,10 @@ const CustomPagination = ({
             <button
               key={index}
               onClick={() => typeof page === "number" && onChangePage(page)}
-              className={`px-3 py-1 rounded text-sm font-medium ${
+              className={`px-3 py-1.5 rounded text-sm font-medium ${
                 page === currentPage
                   ? "bg-[#705295] text-white"
-                  : "text-gray-600 hover:bg-gray-100"
+                  : "text-[#271100]"
               }`}
             >
               {page}
@@ -295,34 +94,42 @@ const CustomPagination = ({
         <button
           onClick={() => onChangePage(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className={`p-2 rounded ${
+          className={`w-8 h-8 flex items-center justify-center rounded bg-white border border-gray-200 ${
             currentPage === totalPages
               ? "text-gray-300 cursor-not-allowed"
-              : "text-gray-600 hover:bg-gray-100"
+              : "text-gray-900 hover:bg-gray-50"
           }`}
         >
-          <FaChevronRight size={16} />
+          <FaArrowRight size={14} />
         </button>
       </div>
 
       {/* Center: Item count */}
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-[#958070]">
         {startRow} - {endRow} of {totalRows}
       </div>
 
       {/* Right: Rows per page */}
       <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-600">Rows per page:</span>
-        <select
-          value={rowsPerPage}
-          onChange={(e) => onChangeRowsPerPage(Number(e.target.value))}
-          className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#705295]"
-        >
-          <option value={10}>10</option>
-          <option value={20}>20</option>
-          <option value={30}>30</option>
-          <option value={50}>50</option>
-        </select>
+        <span className="text-sm text-[#958070]">Rows per page</span>
+        <div className="relative">
+          <select
+            value={rowsPerPage}
+            onChange={(e) => onChangeRowsPerPage(Number(e.target.value))}
+            className="px-3 py-1.5 pr-8 bg-white border border-gray-300 rounded text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#705295] appearance-none cursor-pointer"
+          >
+            <option value={10}>10</option>
+            <option value={15}>15</option>
+            <option value={20}>20</option>
+            <option value={30}>30</option>
+            <option value={50}>50</option>
+          </select>
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -333,10 +140,10 @@ const DataTable: React.FC<DataTableProps> = ({
   searchText = "" 
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
 
   // Use provided data or default sample data
-  const tableData = data || defaultData;
+  const tableData = data || queueRequestsData;
 
   // Filter data based on search
   const filteredData = useMemo(() => {
@@ -450,6 +257,8 @@ const DataTable: React.FC<DataTableProps> = ({
         fontSize: "14px",
         fontWeight: "600",
         minHeight: "48px",
+        borderTopLeftRadius: "8px",
+        borderTopRightRadius: "8px",
       },
     },
     headCells: {
@@ -467,12 +276,14 @@ const DataTable: React.FC<DataTableProps> = ({
         paddingRight: "16px",
         color: "#374151",
         fontSize: "14px",
+        backgroundColor: "#FFFAF7",
       },
     },
     rows: {
       style: {
         borderBottom: "1px solid #e5e7eb",
         minHeight: "48px",
+        backgroundColor: "#FFFAF7",
         "&:hover": {
           backgroundColor: "#f9fafb",
         },
@@ -487,7 +298,7 @@ const DataTable: React.FC<DataTableProps> = ({
   };
 
   return (
-    <>
+    <div className="bg-[#FFFAF7] rounded-lg overflow-hidden">
       <DataTableComponent
         columns={columns}
         data={paginatedData}
@@ -510,7 +321,7 @@ const DataTable: React.FC<DataTableProps> = ({
           setCurrentPage(1);
         }}
       />
-    </>
+    </div>
   );
 };
 
